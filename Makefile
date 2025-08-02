@@ -8,6 +8,7 @@ PLATFORM ?= $(shell docker version --format '{{.Server.Os}}/{{.Server.Arch}}')
 VERSION = "v1.5.23.1030"
 # Since modifying shiny server, should license as AGPL-3.0-or-later
 LICENSE = "AGPL-3.0-or-later" 
+REPO_URL = https://github.com/tjpalanca/shiny-server
 
 # Shiny Server
 
