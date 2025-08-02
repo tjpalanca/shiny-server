@@ -16,6 +16,7 @@ SERVER_TAG=$(SERVER_IMG):$(VERSION)
 SERVER_BUILD_ARGS=\
 	--file Dockerfile \
 	--platform $(PLATFORM) \
+	--build-arg VERSION=$(VERSION) \
 	--label "org.opencontainers.image.source=$(REPO_URL)" \
 	--label "org.opencontainers.image.licenses=$(LICENSE)" \
 	--tag $(SERVER_TAG) \

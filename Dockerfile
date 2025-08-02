@@ -1,3 +1,4 @@
+# Instructions
 FROM buildpack-deps:bookworm AS builder
 
 # Linux dependencies
@@ -7,7 +8,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Clone the repository from GitHub
-RUN git clone --depth 1 --branch v1.5.23.1030 https://github.com/rstudio/shiny-server.git
+ARG VERSION
+RUN git clone --depth 1 --branch ${VERSION} https://github.com/rstudio/shiny-server.git
 # Install node
 WORKDIR /shiny-server 
 RUN mkdir tmp 
