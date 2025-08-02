@@ -1,4 +1,4 @@
-# Instructions
+# Instructions: https://github.com/rstudio/shiny-server/wiki/Building-Shiny-Server-from-Source
 FROM buildpack-deps:bookworm AS builder
 
 # Linux dependencies

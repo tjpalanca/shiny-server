@@ -2,7 +2,7 @@
 
 ## Motivation
 
-- Posit only provides amd64 binaries for Shiny Server, so we build both amd64 and arm64 binaries.
+- Posit only provides amd64 binaries for Shiny Server, so we build both amd64 and arm64 binaries following [their instructions](https://github.com/rstudio/shiny-server/wiki/Building-Shiny-Server-from-Source).
 - Provided in a docker image that you can use in your own Dockerfile via [multi-stage builds](https://docs.docker.com/develop/develop-images/multistage-build/).
 
 ## Usage 
