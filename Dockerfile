@@ -24,6 +24,15 @@ RUN mkdir /shiny-server/build
 RUN /shiny-server/bin/npm ci --omit-dev
 RUN make install
 
+# Shims to enable headers to be sent to the application 
+# https://marian-caikovski.medium.com/retrieving-all-request-headers-in-shiny-web-applications-dc07b79c4a7f
+COPY shims/sockjs.js /usr/local/shiny-server/lib/proxy/socks.js
+COPY shims/transport.js /usr/local/shiny-server/node_modules/sockjs/lib/transport.js
+
 # Configuration file 
 RUN mkdir -p /etc/shiny-server
 RUN cp ../config/default.config /etc/shiny-server/shiny-server.conf
+
+# Workdir 
+EXPOSE 3838
+WORKDIR /usr/local/shiny-server
