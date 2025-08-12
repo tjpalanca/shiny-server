@@ -12,7 +12,13 @@
 - This adds roughly 300MB to your container, so there might be opportunities to slim down.
 
 ```Dockerfile 
-ENV PATH="$PATH:/usr/local/shiny-server/bin"
+# Add {shiny-server}
+ENV PATH="$PATH:/usr/local/shiny-server/bin" 
+ENV SHINY_LOG_STDERR=1
 COPY --from=ghcr.io/tjpalanca/shiny-server:latest /usr/local/shiny-server /usr/local/shiny-server
-COPY --from=ghcr.io/tjpalanca/shiny-server:latest /etc/shiny-server /etc/shiny-server
+RUN mkdir -p /var/lib/shiny-server/bookmarks && chown tjbots /var/lib/shiny-server/bookmarks
+RUN mkdir -p /var/log/shiny-server && chown tjbots /var/log/shiny-server
+# Add configuration
+RUN mkdir -p /etc/shiny-server 
+COPY shiny-server.conf /etc/shiny-server 
 ```
