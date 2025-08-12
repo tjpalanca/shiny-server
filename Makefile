@@ -43,3 +43,6 @@ server-run: server-build
 
 server-bash: server-build
 	docker run -it $(SERVER_TAG) /bin/bash
+
+server-bash-in:
+	docker exec -it $(SERVER_TAG) /bin/bash

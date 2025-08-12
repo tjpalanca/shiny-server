@@ -1,5 +1,5 @@
 # Instructions: https://github.com/rstudio/shiny-server/wiki/Building-Shiny-Server-from-Source
-FROM buildpack-deps:bookworm AS builder
+FROM python:3.12-bookworm
 
 # Linux dependencies
 RUN apt-get update && \
@@ -12,6 +12,7 @@ ARG VERSION
 RUN git clone --depth 1 --branch ${VERSION} https://github.com/rstudio/shiny-server.git
 
 # Install node
+COPY shims/sockjs.js /shiny-server/lib/proxy/sockjs.js
 WORKDIR /shiny-server 
 RUN mkdir tmp 
 WORKDIR /shiny-server/tmp
@@ -23,17 +24,23 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=/usr/local /shiny-server
 RUN make
 RUN mkdir /shiny-server/build
 RUN /shiny-server/bin/npm ci --omit-dev
+COPY shims/transport.js /shiny-server/node_modules/sockjs/lib/transport.js
 RUN make install
+RUN rm -rf /shiny-server
 
-# Shims to enable headers to be sent to the application 
-# https://marian-caikovski.medium.com/retrieving-all-request-headers-in-shiny-web-applications-dc07b79c4a7f
-COPY shims/sockjs.js /usr/local/shiny-server/lib/proxy/sockjs.js
-COPY shims/transport.js /usr/local/shiny-server/node_modules/sockjs/lib/transport.js
-
-# Configuration file 
+# Set up demo app
+RUN pip install shiny 
+RUN useradd -u 1000 -m shiny
+ENV PATH="$PATH:/usr/local/shiny-server/bin"
+ENV SHINY_LOG_STDERR=1
 RUN mkdir -p /etc/shiny-server
-RUN cp ../config/default.config /etc/shiny-server/shiny-server.conf
+COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
+RUN mkdir -p /var/lib/shiny-server/bookmarks && chown shiny /var/lib/shiny-server/bookmarks
+RUN mkdir -p /var/log/shiny-server && chown shiny /var/log/shiny-server
+COPY app /app
 
-# Workdir 
+# Run demo app
+USER shiny
 EXPOSE 3838
-WORKDIR /usr/local/shiny-server
+CMD ["shiny-server"]
+

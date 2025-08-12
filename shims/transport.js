@@ -164,18 +164,43 @@
       this.connection.url = req.url;
       this.connection.pathname = req.pathname;
       this.connection.protocol = this.recv.protocol;
-    //   headers = {};
-    //   ref = ['referer', 'x-client-ip', 'x-forwarded-for', 'x-forwarded-host', 'x-forwarded-port', 'x-cluster-client-ip', 'via', 'x-real-ip', 'x-forwarded-proto', 'x-ssl', 'dnt', 'host', 'user-agent', 'accept-language'];
-    //   for (i = 0, len = ref.length; i < len; i++) {
-    //     key = ref[i];
-    //     if (req.headers[key]) {
-    //       headers[key] = req.headers[key];
-    //     }
-    //   }
-    //   if (headers) {
-    //     return this.connection.headers = headers;
-    //   }
-      return this.connection.headers = req.headers || {};
+      headers = {};
+      ref = [
+        'referer', 
+        'x-client-ip', 
+        'x-forwarded-for', 
+        'x-forwarded-host', 
+        'x-forwarded-port', 
+        'x-cluster-client-ip', 
+        'via',
+        'x-real-ip', 
+        'x-forwarded-proto', 
+        'x-ssl', 
+        'dnt', 
+        'host', 
+        'user-agent', 
+        'accept-language',
+        // Cloudflare: https://developers.cloudflare.com/fundamentals/reference/http-headers/
+        'cf-connecting-ip',
+        'cf-connecting-ipv6',
+        'cf-ray',
+        'cf-ipcountry',
+        // ShinyProxy: https://shinyproxy.io/documentation/concepts/authentication_and_authorization/#using-access-control-within-an-app
+        'x-sp-userid',
+        'x-sp-usergroups',
+        // Cloudflare Access: https://developers.cloudflare.com/cloudflare-one/identity/authorization-cookie/validating-json/
+        'cf-access-authenticated-user-email',
+        'cf-access-jwt-assertion'
+      ];
+      for (i = 0, len = ref.length; i < len; i++) {
+        key = ref[i];
+        if (req.headers[key]) {
+          headers[key] = req.headers[key];
+        }
+      }
+      if (headers) {
+        return this.connection.headers = headers;
+      }
     };
 
     Session.prototype.unregister = function() {
