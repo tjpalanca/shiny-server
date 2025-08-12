@@ -11,11 +11,6 @@ RUN apt-get update && \
 ARG VERSION
 RUN git clone --depth 1 --branch ${VERSION} https://github.com/rstudio/shiny-server.git
 
-# Shims to enable headers to be sent to the application 
-# https://marian-caikovski.medium.com/retrieving-all-request-headers-in-shiny-web-applications-dc07b79c4a7f
-COPY shims/sockjs.js /usr/local/shiny-server/lib/proxy/socks.js
-COPY shims/transport.js /usr/local/shiny-server/node_modules/sockjs/lib/transport.js
-
 # Install node
 WORKDIR /shiny-server 
 RUN mkdir tmp 
@@ -29,6 +24,11 @@ RUN make
 RUN mkdir /shiny-server/build
 RUN /shiny-server/bin/npm ci --omit-dev
 RUN make install
+
+# Shims to enable headers to be sent to the application 
+# https://marian-caikovski.medium.com/retrieving-all-request-headers-in-shiny-web-applications-dc07b79c4a7f
+COPY shims/sockjs.js /usr/local/shiny-server/lib/proxy/sockjs.js
+COPY shims/transport.js /usr/local/shiny-server/node_modules/sockjs/lib/transport.js
 
 # Configuration file 
 RUN mkdir -p /etc/shiny-server
